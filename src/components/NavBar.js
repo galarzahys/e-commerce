@@ -7,6 +7,7 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import ShoppingCart from '@mui/icons-material/ShoppingCart'
+import { Badge } from '@mui/material';
 
 
 export default function NavBar() {
@@ -28,7 +29,9 @@ export default function NavBar() {
           </Typography>
           <Button color="inherit">Login</Button>
           <IconButton>
-          <ShoppingCart />
+            <Badge badgeContent={2} color="secondary">
+            <ShoppingCart />
+            </Badge>
           </IconButton>
          
         </Toolbar>
