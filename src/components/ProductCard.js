@@ -11,6 +11,8 @@ import Typography from '@mui/material/Typography';
 import AddShoppingCart from '@mui/icons-material/AddShoppingCart';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import accounting from 'accounting';
+import { actionTypes } from '../context/reducer';
+import {useStateValue} from '../context/StateProvider'; 
 
 
 interface ExpandMoreProps extends IconButtonProps {
@@ -28,12 +30,31 @@ const ExpandMore = styled((props: ExpandMoreProps) => {
   }),
 }));
 
-export default function ProductCard() {
+export default function ProductCard(props) {
+
+  const [ {basket}, dispatch ] = useStateValue(); 
+
   const [expanded, setExpanded] = React.useState(false);
+
+  const { id, name, price, rating, image, description } = props;
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
+
+  const AddToBasket = () => {
+    dispatch({
+      type: actionTypes.ADD_TO_BASKET,
+      item: {
+        id,
+        name,
+        image,
+        price,
+        rating,
+        description 
+      }
+    })
+  }
 
   return (
     <Card sx={{ maxWidth: 345 }}>
@@ -42,31 +63,32 @@ export default function ProductCard() {
           <Typography /*className={classes.action}*/
           variant='h5'
           color='textSecondary'
-          >{accounting.formatMoney(200, "$")}</Typography>
+          key={id}
+          >{accounting.formatMoney(price, "$")}</Typography>
         }
-        title="Shoes"
+        title={name}
         subheader="Black - 37 al 44"
       />
       <CardMedia
         component="img"
         height="194"
-        image="https://assets.adidas.com/images/w_600,f_auto,q_auto/686fd867c0ab402f9d85ad78011dda14_9366/Zapatillas_Showtheway_2.0_Negro_GY6347_01_standard.jpg"
-        alt="Paella dish"
+        image={image}
+        alt={name}
       />
       <CardContent>
         <Typography variant="body2" color="text.secondary">
-          Zapatillas deportivas Runner, suela con tecnologia SmoothStep.
+          {description}
         </Typography>
       </CardContent>
       <CardActions disableSpacing>
-        <IconButton aria-label="Add to Cart">
+        <IconButton aria-label="Add to Cart" onClick={AddToBasket}>
           <AddShoppingCart fontSize='large' />
         </IconButton>
-        {Array(3)
+        {Array(rating)
         .fill()
         .map((_, i) => (
           <p>&#11088;</p>
-        ))};
+        ))}
 
         <ExpandMore
           expand={expanded}
@@ -79,33 +101,15 @@ export default function ProductCard() {
       </CardActions>
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent>
-          <Typography paragraph>Method:</Typography>
+          <Typography paragraph>Details:</Typography>
           <Typography paragraph>
-            Heat 1/2 cup of the broth in a pot until simmering, add saffron and set
-            aside for 10 minutes.
+            {description}
           </Typography>
-          <Typography paragraph>
-            Heat oil in a (14- to 16-inch) paella pan or a large, deep skillet over
-            medium-high heat. Add chicken, shrimp and chorizo, and cook, stirring
-            occasionally until lightly browned, 6 to 8 minutes. Transfer shrimp to a
-            large plate and set aside, leaving chicken and chorizo in the pan. Add
-            pimentón, bay leaves, garlic, tomatoes, onion, salt and pepper, and cook,
-            stirring often until thickened and fragrant, about 10 minutes. Add
-            saffron broth and remaining 4 1/2 cups chicken broth; bring to a boil.
-          </Typography>
-          <Typography paragraph>
-            Add rice and stir very gently to distribute. Top with artichokes and
-            peppers, and cook without stirring, until most of the liquid is absorbed,
-            15 to 18 minutes. Reduce heat to medium-low, add reserved shrimp and
-            mussels, tucking them down into the rice, and cook again without
-            stirring, until mussels have opened and rice is just tender, 5 to 7
-            minutes more. (Discard any mussels that don&apos;t open.)
-          </Typography>
-          <Typography>
-            Set aside off of the heat to let rest for 10 minutes, and then serve.
-          </Typography>
+          
         </CardContent>
       </Collapse>
     </Card>
   );
 }
+
+
