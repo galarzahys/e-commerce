@@ -12,7 +12,10 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import accounting from "accounting";
-import { Box } from "@mui/material";
+import DeleteIcon from '@mui/icons-material/Delete';
+import { actionTypes } from "../context/reducer";
+import { Box } from "@mui/system";
+import { Button } from "@mui/material";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -26,7 +29,8 @@ const Item = styled(Paper)(({ theme }) => ({
 const CheckoutPage = () => {
   const [{ basket, checkout_data, payment_data }, dispatch] = useStateValue();
 
-  console.log(checkout_data)
+
+
 
   const unifiedBasket = basket.reduce((acum, actualValue) => {
     const existingItem = acum.find(
@@ -52,6 +56,13 @@ const CheckoutPage = () => {
     return cant * price;
   }
 
+  const removeItem = (id) => {
+    dispatch({
+      type: actionTypes.DEL_FROM_BASKET,
+      id : id
+    })
+  }
+
   function FormRow() {
     return (
         <Box sx={{ flexGrow: 1 }}>
@@ -59,6 +70,7 @@ const CheckoutPage = () => {
           <Table item xs={12} sm={6} md={3} size="small" style={{ marginLeft: "20px", maxWidth: "95%", padding: "0px"}} aria-label="a dense table">
             <TableHead>
               <TableRow>
+              <TableCell></TableCell>
                 <TableCell>Product</TableCell>
                 <TableCell align="center">Quantity</TableCell>
                 <TableCell align="right">Price</TableCell>
@@ -71,9 +83,8 @@ const CheckoutPage = () => {
                   key={row.id}
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                 >
-                  <TableCell component="th" scope="row">
-                    {row.name}
-                  </TableCell>
+                  <TableCell><Button onClick={()=>removeItem(row.id)}><DeleteIcon /></Button></TableCell>
+                  <TableCell component="th" scope="row">{row.name}</TableCell>
                   <TableCell align="center">{row.quantity}</TableCell>
                   <TableCell align="right">{accounting.formatMoney(row.price, "£") }</TableCell>
                   <TableCell align="right">{accounting.formatMoney(getSubtotal(row.quantity, row.price), "£" )}</TableCell>
