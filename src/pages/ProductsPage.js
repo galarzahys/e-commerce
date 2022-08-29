@@ -16,15 +16,15 @@ const Item = styled(Paper)(({ theme }) => ({
 
 export default function ProductsPage() {
   
-  console.log(products)
+
   return (
-    <Box sx={{ flexGrow: 1 }}>
+    <Box sx={{ flexGrow: 1, justifyContent: "space-around" }}>
       <Grid container spacing={1}>
 
         { products.map(product => 
         (
-        <Grid item xs={6} sm={4} md={2} key={product.id} >
-          <ProductCard name={product.name} image={product.image} rating={product.rating} description={product.description} price={product.price}  />
+        <Grid item xs={12} sm={6} md={4} lg={3} key={product.id} >
+          <ProductCard id={product.id} name={product.name} image={product.image} rating={product.rating} description={product.description} price={product.price} quantity={product.quantity} short_data={product.short_data}  />
           </Grid>
 
         ))

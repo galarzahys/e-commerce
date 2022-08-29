@@ -13,13 +13,11 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import accounting from 'accounting';
 import { actionTypes } from '../context/reducer';
 import {useStateValue} from '../context/StateProvider'; 
+import { makeStyles } from "@mui/styles";
+import { Tooltip } from '@mui/material';
 
 
-interface ExpandMoreProps extends IconButtonProps {
-  expand: boolean;
-}
-
-const ExpandMore = styled((props: ExpandMoreProps) => {
+const ExpandMore = styled((props) => {
   const { expand, ...other } = props;
   return <IconButton {...other} />;
 })(({ theme, expand }) => ({
@@ -30,13 +28,40 @@ const ExpandMore = styled((props: ExpandMoreProps) => {
   }),
 }));
 
+const useStyles = makeStyles((theme)=>({
+  root : {
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "center",
+      alignItems: "center",
+      height: "20vh",
+      boxShadow: "1px 1px 3px #313843"
+  },
+  
+  card : {
+      minHeight: "500px"
+  },
+
+  headCard : {
+    minHeight: "200px",
+    maxHeight: "200px"
+}, 
+content : {
+  minHeight: "80px",
+  maxHeight: "80px"
+}
+
+}))
+
 export default function ProductCard(props) {
+
+  const classes = useStyles()
 
   const [ {basket}, dispatch ] = useStateValue(); 
 
   const [expanded, setExpanded] = React.useState(false);
 
-  const { id, name, price, rating, image, description } = props;
+  const { id, name, price, rating, short_data, quantity, image, description } = props;
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
@@ -49,6 +74,7 @@ export default function ProductCard(props) {
         id,
         name,
         image,
+        quantity,
         price,
         rating,
         description 
@@ -57,33 +83,31 @@ export default function ProductCard(props) {
   }
 
   return (
-    <Card sx={{ maxWidth: 345 }}>
+    <Card sx={{ maxWidth: 345 }} className={classes.card}>
       <CardHeader
         action={
           <Typography /*className={classes.action}*/
           variant='h5'
           color='textSecondary'
           key={id}
-          >{accounting.formatMoney(price, "$")}</Typography>
+          className={classes.headCard}
+          >{accounting.formatMoney(price, "£")}</Typography>
         }
         title={name}
-        subheader="Black - 37 al 44"
+        subheader={short_data}
       />
       <CardMedia
         component="img"
-        height="194"
+        height="180"
         image={image}
         alt={name}
       />
-      <CardContent>
-        <Typography variant="body2" color="text.secondary">
-          {description}
-        </Typography>
-      </CardContent>
       <CardActions disableSpacing>
+      <Tooltip title="Add to basket" sx={{ p: 0 }}>
         <IconButton aria-label="Add to Cart" onClick={AddToBasket}>
           <AddShoppingCart fontSize='large' />
         </IconButton>
+        </Tooltip>
         {Array(rating)
         .fill()
         .map((_, i) => (
@@ -96,8 +120,11 @@ export default function ProductCard(props) {
           aria-expanded={expanded}
           aria-label="show more"
         >
+                  <Tooltip title={expanded ? "See less" : "See more info"} sx={{ p: 0 }}>
           <ExpandMoreIcon />
+          </Tooltip>
         </ExpandMore>
+
       </CardActions>
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent>
