@@ -7,14 +7,30 @@ import Grid from '@mui/material/Grid';
 import { useStateValue } from '../../context/StateProvider';
 import accounting from 'accounting';
 import { getBasketTotal } from '../../context/reducer';
+import { Box, Button } from '@mui/material';
+import { actionTypes } from '../../context/reducer';
 
 
 
 export default function Review() {
 
-  const [{ basket, checkout_data, payment_data }, dispatch] = useStateValue();
+  const [{ basket, checkout_data, payment_data, activeStep }, dispatch] = useStateValue();
 
   const cardNumber = payment_data.cardNumber.slice(8, 12);
+
+  const handleBack = () => {
+    dispatch({
+      type: actionTypes.SET_STEP,
+      activeStep: activeStep - 1,
+    });
+  };
+
+  const handleNext = () => {
+    dispatch({
+      type: actionTypes.SET_STEP,
+      activeStep: activeStep + 1,
+    });
+  };
 
   return (
     <>
@@ -59,6 +75,18 @@ export default function Review() {
               </>
 
           </Grid>
+          <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+            <Button onClick={handleBack} sx={{ mt: 3, ml: 1 }}>
+              Back
+            </Button>
+            <Button
+              variant="contained"
+              onClick={handleNext}
+              sx={{ mt: 3, ml: 1 }}
+            >
+              Confirm
+            </Button>
+          </Box>
         </Grid>
       </Grid>
     </>

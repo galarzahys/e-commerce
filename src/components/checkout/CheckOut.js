@@ -54,12 +54,10 @@ export default function Checkout() {
 
   const navigate = useNavigate()
 
-  const [{ basket, checkout_data, payment_data }, dispatch] = useStateValue();
-  const [activeStep, setActiveStep] = React.useState(0);
+  const [{ basket, checkout_data, payment_data, activeStep }, dispatch] = useStateValue();
+ 
 
-  const handleNext = () => {
-    setActiveStep(activeStep + 1);
-  };
+
 
   const resetShop = () => {
     dispatch(
@@ -67,15 +65,13 @@ export default function Checkout() {
       type: actionTypes.RESET_DATA,
       basket: [],
       checkout_data: [],
-      payment_data: []
+      payment_data: [],
+      activeStep: 0
     });
 
     navigate("/")
   }
 
-  const handleBack = () => {
-    setActiveStep(activeStep - 1);
-  };
 
   return (
     <ThemeProvider theme={theme}>
@@ -103,7 +99,7 @@ export default function Checkout() {
             ))}
           </Stepper>
           <React.Fragment>
-            {activeStep === steps.length ? (
+            {activeStep === 3 ? (
               <React.Fragment>
                 <Typography variant="h5" gutterBottom>
                   Thank you for your order.
@@ -113,26 +109,12 @@ export default function Checkout() {
                   confirmation, and will send you an update when your order has
                   shipped.
                 </Typography>
-                 <Button variant="contained" color="secondary" onClick={resetShop}>Back to Shop</Button>
+                 <Button variant="contained" color="primary" onClick={resetShop}>Back to Shop</Button>
               </React.Fragment>
             ) : (
               <React.Fragment>
                 {getStepContent(activeStep)}
-                <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                  {activeStep !== 0 && (
-                    <Button onClick={handleBack} sx={{ mt: 3, ml: 1 }}>
-                      Back
-                    </Button>
-                  )}
-
-                  <Button
-                    variant="contained"
-                    onClick={handleNext}
-                    sx={{ mt: 3, ml: 1 }}
-                  >
-                    {activeStep === steps.length - 1 ? 'Place order' : 'Next'}
-                  </Button>
-                </Box>
+ 
               </React.Fragment>
             )}
           </React.Fragment>

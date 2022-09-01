@@ -14,7 +14,7 @@ import ResponsiveAppBar from './components/Header';
 import { createTheme } from '@mui/material/styles';
 import { ThemeProvider } from '@mui/system';
 
-const theme = createTheme({
+export const theme = createTheme({
   palette: {
     primary: {
       light: '#33ab9f',
@@ -43,15 +43,9 @@ function App() {
       dispatch({
         type: actionTypes.SET_USER,
         user: user,
-
       })
-      // User is signed in, see docs for a list of available properties
-      // https://firebase.google.com/docs/reference/js/firebase.User
       const uid = user.uid;
-      // ...
     } else {
-      // User is signed out
-      // ...
     }
   });}, [])
 

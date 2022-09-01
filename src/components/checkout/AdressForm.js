@@ -6,11 +6,16 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import { actionTypes } from '../../context/reducer';
 import {useStateValue} from '../../context/StateProvider'; 
+import { Button } from '@mui/material';
+import Swal from 'sweetalert2';
+import { Box } from '@mui/system';
+import {useNavigate} from 'react-router-dom'
 
 export default function AddressForm() {
 
 
-  const [ {checkout_data}, dispatch ] = useStateValue(); 
+  const [ {checkout_data, activeStep}, dispatch ] = useStateValue(); 
+  const navigate = useNavigate();
 
   const [ firstName, setFN ] = useState("")
   const [ lastName, setLN ] = useState("")
@@ -22,7 +27,7 @@ export default function AddressForm() {
   const [ country, setCountry ] = useState("")
 
 
-  const setData = () => {
+const setData = () => {
     dispatch({
       type: actionTypes.SET_CO_DATA,
       checkout_data: {
@@ -36,7 +41,30 @@ export default function AddressForm() {
         country,
       }
     })
+    if(firstName === "" || address1 === "" || city === ""){
+      notDataAlert();
+    } else {
+      dispatch({
+        type: actionTypes.SET_STEP,
+        activeStep: activeStep + 1
+      })
+    }
+
   }
+
+  const notDataAlert = ()=>{
+    Swal.fire({
+      title: '¡The data is incomplete!',
+      showCancelButton: true,
+      confirmButtonText: 'Ignore',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        dispatch({
+          type: actionTypes.SET_STEP,
+          activeStep: activeStep + 1
+        })
+}})};
+  
 
 
   return (
@@ -48,7 +76,8 @@ export default function AddressForm() {
         <Grid item xs={12} sm={6}>
           <TextField
             value={firstName}
-            required
+            required={true}
+            helperText="Required"
             id="firstName"
             name="firstName"
             label="First name"
@@ -60,7 +89,7 @@ export default function AddressForm() {
         <Grid item xs={12} sm={6}>
           <TextField
             value={lastName}
-            required
+            required={true}
             id="lastName"
             name="lastName"
             label="Last name"
@@ -73,7 +102,7 @@ export default function AddressForm() {
         <Grid item xs={12}>
           <TextField
             value={address1}
-            required
+            required={true}
             id="address1"
             name="address1"
             label="Address line 1"
@@ -147,11 +176,26 @@ export default function AddressForm() {
         </Grid>
         <Grid item xs={12}>
           <FormControlLabel
-            control={<Checkbox color="secondary" name="saveAddress" value="yes" onChange={(e)=>{if(e.target.checked) {setData()}}} />}
+            control={<Checkbox color="secondary" name="saveAddress" value="yes" />}
             label="Use this address for payment details"
           />
+            <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+            <Button onClick={()=>navigate('/basket')} sx={{ mt: 3, ml: 1 }}>
+              Back to Basket
+            </Button>
+            <Button
+                    variant="contained"
+                    onClick={(e)=>setData()}
+                    sx={{ mt: 3, ml: 1 }}
+                  >
+                    Next
+                  </Button>
+          </Box>
+
+
         </Grid>
       </Grid>
     </>
   );
 }
+
